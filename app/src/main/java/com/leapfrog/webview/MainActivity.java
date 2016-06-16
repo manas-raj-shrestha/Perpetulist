@@ -50,8 +50,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setWebView() {
-        webView.loadUrl(PrefUtils.getDefaultUrl(this));
 
+        if (getIntent().getData() != null) {
+            Uri data = getIntent().getData();
+            String schema = data.getScheme();
+            String host = data.getHost();
+            String url = data.getPath();
+            webView.loadUrl(schema + "://" + host + url);
+            Log.e("====", schema + "://" + host + url);
+
+        } else {
+            webView.loadUrl(PrefUtils.getDefaultUrl(this));
+        }
 
         webView.getSettings().setJavaScriptEnabled(true);
 
@@ -162,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+
     }
 
     private File createImageFile() throws IOException {
@@ -207,11 +218,18 @@ public class MainActivity extends AppCompatActivity {
             try {
                 url = new URL(webView.getUrl());
                 url1 = new URL(PrefUtils.getDefaultUrl(this));
+
+                if (!url.getHost().contentEquals(url1.getHost()) && getIntent().getData() == null) {
+                    webView.loadUrl(PrefUtils.getDefaultUrl(this));
+                }else {
+                    getIntent().setData(null);
+                }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+                Log.e("err", e.toString());
             }
-            if (!url.getHost().contentEquals(url1.getHost()))
-                webView.loadUrl(PrefUtils.getDefaultUrl(this));
+
+
         }
     }
 
@@ -270,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
                 if (null == mUploadMessage) return;
                 Uri result = data == null || resultCode != RESULT_OK ? null
                         : data.getData();
-                Log.e("here","here " + (result));
+                Log.e("here", "here " + (result));
                 mUploadMessage.onReceiveValue(result);
                 mUploadMessage = null;
             }
