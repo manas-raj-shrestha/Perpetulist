@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             String schema = data.getScheme();
             String host = data.getHost();
             String url = data.getPath();
-            webView.loadUrl(schema + "://" + host + url);
+            webView.loadUrl("http" + "://" + host + url);
             Log.e("====", schema + "://" + host + url);
 
         } else {
